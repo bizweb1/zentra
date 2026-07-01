@@ -285,7 +285,7 @@
     overflow:hidden;box-shadow:var(--shadow-lift);
   }
   .dash-tabs{display:flex;gap:2px;background:rgba(255,255,255,.06);padding:6px;flex-wrap:wrap;}
-  .dash-tab{padding:9px 16px;font-size:13px;font-weight:600;border-radius:8px;color:rgba(255,255,255,.55);font-family:'JetBrains Mono',monospace;}
+  .dash-tab{padding:9px 16px;font-size:13px;font-weight:600;border-radius:8px;color:rgba(255,255,255,.55);font-family:'JetBrains Mono',monospace;cursor:pointer;user-select:none;}
   .dash-tab.active{background:var(--navy-950);color:#fff;}
   .dash-body{padding:30px;}
   .dash-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
@@ -293,6 +293,26 @@
   .metric .m-label{font-size:12px;color:rgba(255,255,255,.55);font-family:'JetBrains Mono',monospace;}
   .metric .m-value{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;margin-top:8px;color:#fff;}
   .metric .m-target{font-size:11.5px;color:var(--cyan-400);margin-top:4px;font-family:'JetBrains Mono',monospace;}
+  .dash-panel-content{display:none;}
+  .dash-panel-content.active{display:block;}
+  .dash-list{display:flex;flex-direction:column;gap:10px;}
+  .dash-row{
+    display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+    background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px 18px;
+  }
+  .dash-row .dr-main{display:flex;align-items:center;gap:14px;min-width:0;flex-wrap:wrap;}
+  .dash-row .dr-id{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:rgba(255,255,255,.42);flex:none;}
+  .dash-row .dr-name{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14.5px;color:#fff;}
+  .dash-row .dr-sub{font-size:12px;color:rgba(255,255,255,.5);}
+  .dash-row .dr-right{display:flex;align-items:center;gap:14px;flex:none;}
+  .dash-row .dr-meta{font-size:12px;color:rgba(255,255,255,.5);font-family:'JetBrains Mono',monospace;white-space:nowrap;}
+  .dash-row .dr-badge{
+    flex:none;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+    padding:5px 11px;border-radius:100px;letter-spacing:.03em;white-space:nowrap;
+  }
+  .dr-badge.good{background:rgba(31,157,107,.16);color:#3EDB8A;}
+  .dr-badge.pending{background:rgba(62,155,221,.16);color:var(--blue-400);}
+  .dr-badge.due{background:rgba(230,180,60,.18);color:#E6C13C;}
 
   /* ---------- INDUSTRIES ---------- */
   .industries{padding:96px 0;background:var(--paper);}
@@ -361,15 +381,33 @@
   .info-row .ir-label{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);}
   .info-row .ir-value{font-size:15.5px;font-weight:600;color:var(--navy-950);margin-top:2px;}
   .contact-form{background:#fff;border:1px solid var(--line);border-radius:18px;padding:34px;box-shadow:var(--shadow-card);}
+  .form-section{margin-bottom:26px;}
+  .form-section + .form-section{padding-top:22px;border-top:1px solid var(--line);}
+  .form-section-title{
+    font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--blue-600);margin-bottom:16px;display:block;
+  }
   .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
   .field{margin-bottom:16px;}
+  .field:last-child{margin-bottom:0;}
   .field label{font-size:12.5px;font-weight:600;color:var(--ink-soft);display:block;margin-bottom:7px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.04em;}
   .field input, .field select, .field textarea{
     width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:9px;font-family:'Inter',sans-serif;
     font-size:14.5px;background:var(--paper);color:var(--ink);
   }
   .field input:focus, .field select:focus, .field textarea:focus{outline:2px solid var(--blue-500);outline-offset:1px;background:#fff;}
-  .field textarea{resize:vertical;min-height:100px;}
+  .field textarea{resize:vertical;min-height:90px;}
+  .field-hint{font-size:12px;color:var(--ink-soft);margin-top:6px;line-height:1.4;}
+  .field-hint.warn{color:#9A6B00;display:none;}
+  .field-hint.warn.show{display:block;}
+  .check-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+  .check-chip{
+    display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:9px;
+    padding:10px 12px;font-size:13.5px;color:var(--ink);background:var(--paper);cursor:pointer;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .check-chip:has(input:checked){border-color:var(--blue-500);background:#EEF3FC;}
+  .check-chip input{width:15px;height:15px;flex:none;accent-color:var(--blue-600);}
   .form-note{font-size:12.5px;color:var(--ink-soft);margin-top:14px;}
 
   /* ---------- FOOTER ---------- */
@@ -652,35 +690,123 @@
     </div>
     <div class="dash-panel reveal">
       <div class="dash-tabs">
-        <span class="dash-tab active">Overview</span>
-        <span class="dash-tab">Work Orders</span>
-        <span class="dash-tab">Inspections</span>
-        <span class="dash-tab">Reports</span>
-        <span class="dash-tab">Invoices</span>
+        <span class="dash-tab active" data-tab="overview">Overview</span>
+        <span class="dash-tab" data-tab="workorders">Work Orders</span>
+        <span class="dash-tab" data-tab="inspections">Inspections</span>
+        <span class="dash-tab" data-tab="reports">Reports</span>
+        <span class="dash-tab" data-tab="invoices">Invoices</span>
       </div>
       <div class="dash-body">
-        <div class="dash-metrics">
-          <div class="metric">
-            <div class="m-label">CLEANING QUALITY SCORE</div>
-            <div class="m-value">Target &gt;97%</div>
-            <div class="m-target">AI + supervisor verified</div>
-          </div>
-          <div class="metric">
-            <div class="m-label">RESPONSE TIME</div>
-            <div class="m-value">&lt;60 min</div>
-            <div class="m-target">Standard for open issues</div>
-          </div>
-          <div class="metric">
-            <div class="m-label">INSPECTION COMPLETION</div>
-            <div class="m-value">100%</div>
-            <div class="m-target">Every visit, every checkpoint</div>
-          </div>
-          <div class="metric">
-            <div class="m-label">COMPLAINT RESOLUTION</div>
-            <div class="m-value">&lt;24 hrs</div>
-            <div class="m-target">Logged &amp; tracked to close</div>
+
+        <div class="dash-panel-content active" data-panel="overview">
+          <div class="dash-metrics">
+            <div class="metric">
+              <div class="m-label">CLEANING QUALITY SCORE</div>
+              <div class="m-value">Target &gt;97%</div>
+              <div class="m-target">AI + supervisor verified</div>
+            </div>
+            <div class="metric">
+              <div class="m-label">RESPONSE TIME</div>
+              <div class="m-value">&lt;60 min</div>
+              <div class="m-target">Standard for open issues</div>
+            </div>
+            <div class="metric">
+              <div class="m-label">INSPECTION COMPLETION</div>
+              <div class="m-value">100%</div>
+              <div class="m-target">Every visit, every checkpoint</div>
+            </div>
+            <div class="metric">
+              <div class="m-label">COMPLAINT RESOLUTION</div>
+              <div class="m-value">&lt;24 hrs</div>
+              <div class="m-target">Logged &amp; tracked to close</div>
+            </div>
           </div>
         </div>
+
+        <div class="dash-panel-content" data-panel="workorders">
+          <div class="dash-list">
+            <div class="dash-row">
+              <div class="dr-main"><span class="dr-id">#WO-40218</span><span class="dr-name">San Mateo City Hall</span><span class="dr-sub">Restroom &amp; floor service</span></div>
+              <div class="dr-right"><span class="dr-meta">Today, 6:42 AM</span><span class="dr-badge good">Completed</span></div>
+            </div>
+            <div class="dash-row">
+              <div class="dr-main"><span class="dr-id">#WO-40201</span><span class="dr-name">Lincoln Elementary</span><span class="dr-sub">Full facility clean</span></div>
+              <div class="dr-right"><span class="dr-meta">Today, 5:15 AM</span><span class="dr-badge good">Completed</span></div>
+            </div>
+            <div class="dash-row">
+              <div class="dr-main"><span class="dr-id">#WO-40195</span><span class="dr-name">Downtown Transit Center</span><span class="dr-sub">Disinfection service</span></div>
+              <div class="dr-right"><span class="dr-meta">Today, 8:00 AM</span><span class="dr-badge pending">In Progress</span></div>
+            </div>
+            <div class="dash-row">
+              <div class="dr-main"><span class="dr-id">#WO-40188</span><span class="dr-name">Bayview Medical Clinic</span><span class="dr-sub">Floor care</span></div>
+              <div class="dr-right"><span class="dr-meta">Tomorrow, 6:00 AM</span><span class="dr-badge pending">Scheduled</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-panel-content" data-panel="inspections">
+          <div class="dash-list">
+            <div class="dash-row">
+              <div class="dr-main"><span class="dr-id">#INS-1042</span><span class="dr-name">San Mateo City Hall</span><span class="dr-sub">Quality score 98%</span></div>
+              <div class="dr-right"><span class="dr-meta">AI + supervisor</span><span class="dr-badge good">Verified</span></div>
+            </div>
+            <div class="dash-row">
+              <div class="dr-main"><span class="dr-id">#INS-1041</span><span class="dr-name">Lincoln Elementary</span><span class="dr-sub">Quality score 96%</span></div>
+              <div class="dr-right"><span class="dr-meta">AI + supervisor</span><span class="dr-badge good">Verified</span></div>
+            </div>
+            <div class="dash-row">
+              <div class="dr-main"><span class="dr-id">#INS-1040</span><span class="dr-name">Bayview Medical Clinic</span><span class="dr-sub">Quality score 94%</span></div>
+              <div class="dr-right"><span class="dr-meta">Flagged by AI</span><span class="dr-badge pending">Supervisor Review</span></div>
+            </div>
+            <div class="dash-row">
+              <div class="dr-main"><span class="dr-id">#INS-1039</span><span class="dr-name">Downtown Transit Center</span><span class="dr-sub">Quality score 99%</span></div>
+              <div class="dr-right"><span class="dr-meta">AI + supervisor</span><span class="dr-badge good">Verified</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-panel-content" data-panel="reports">
+          <div class="dash-list">
+            <div class="dash-row">
+              <div class="dr-main"><span class="dr-name">Monthly Performance Report</span><span class="dr-sub">June 2026 &middot; PDF</span></div>
+              <div class="dr-right"><span class="dr-badge good">Ready</span></div>
+            </div>
+            <div class="dash-row">
+              <div class="dr-main"><span class="dr-name">Compliance Summary</span><span class="dr-sub">Q2 2026 &middot; PDF</span></div>
+              <div class="dr-right"><span class="dr-badge good">Ready</span></div>
+            </div>
+            <div class="dash-row">
+              <div class="dr-main"><span class="dr-name">Quality Trend Analysis</span><span class="dr-sub">June 2026 &middot; PDF</span></div>
+              <div class="dr-right"><span class="dr-badge good">Ready</span></div>
+            </div>
+            <div class="dash-row">
+              <div class="dr-main"><span class="dr-name">Incident &amp; Response Log</span><span class="dr-sub">June 2026 &middot; PDF</span></div>
+              <div class="dr-right"><span class="dr-badge good">Ready</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-panel-content" data-panel="invoices">
+          <div class="dash-list">
+            <div class="dash-row">
+              <div class="dr-main"><span class="dr-id">INV-1201</span><span class="dr-name">Monthly Service Invoice</span></div>
+              <div class="dr-right"><span class="dr-meta">Jul 1, 2026</span><span class="dr-badge due">Due</span></div>
+            </div>
+            <div class="dash-row">
+              <div class="dr-main"><span class="dr-id">INV-1187</span><span class="dr-name">Monthly Service Invoice</span></div>
+              <div class="dr-right"><span class="dr-meta">Jun 1, 2026</span><span class="dr-badge good">Paid</span></div>
+            </div>
+            <div class="dash-row">
+              <div class="dr-main"><span class="dr-id">INV-1162</span><span class="dr-name">Monthly Service Invoice</span></div>
+              <div class="dr-right"><span class="dr-meta">May 1, 2026</span><span class="dr-badge good">Paid</span></div>
+            </div>
+            <div class="dash-row">
+              <div class="dr-main"><span class="dr-id">INV-1140</span><span class="dr-name">Monthly Service Invoice</span></div>
+              <div class="dr-right"><span class="dr-meta">Apr 1, 2026</span><span class="dr-badge good">Paid</span></div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -881,40 +1007,130 @@
         </div>
       </div>
       <form class="contact-form reveal" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
-        <div class="form-row">
-          <div class="field">
-            <label for="name">Full Name</label>
-            <input id="name" name="name" type="text" required placeholder="Jane Rodriguez">
+        <input type="hidden" name="_subject" value="New Proposal Request &mdash; Zentra Facility Solutions">
+
+        <div class="form-section">
+          <span class="form-section-title">Your Information</span>
+          <div class="form-row">
+            <div class="field">
+              <label for="name">Full Name</label>
+              <input id="name" name="name" type="text" required placeholder="Jane Rodriguez">
+            </div>
+            <div class="field">
+              <label for="title">Job Title</label>
+              <input id="title" name="job_title" type="text" required placeholder="Facility Manager">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="org">Organization</label>
+              <input id="org" name="organization" type="text" required placeholder="City of &hellip;">
+            </div>
+            <div class="field">
+              <label for="phone">Phone</label>
+              <input id="phone" name="phone" type="tel" placeholder="(415) 000-0000">
+            </div>
           </div>
           <div class="field">
-            <label for="org">Organization</label>
-            <input id="org" name="organization" type="text" required placeholder="City of &hellip;">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="field">
-            <label for="email">Email</label>
+            <label for="email">Work Email</label>
             <input id="email" name="email" type="email" required placeholder="you@agency.gov">
+            <p class="field-hint warn" id="emailHint">This looks like a personal email address. Using your work email helps us confirm your organization and speeds up the proposal review.</p>
           </div>
+        </div>
+
+        <div class="form-section">
+          <span class="form-section-title">Facility Details</span>
+          <div class="form-row">
+            <div class="field">
+              <label for="ftype">Facility Type</label>
+              <select id="ftype" name="facility_type" required>
+                <option value="">Select one</option>
+                <option>Government</option>
+                <option>Healthcare</option>
+                <option>Education</option>
+                <option>Commercial / Corporate</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="locations">Number of Locations</label>
+              <select id="locations" name="num_locations">
+                <option value="">Select one</option>
+                <option>1</option>
+                <option>2&ndash;5</option>
+                <option>6&ndash;20</option>
+                <option>20+</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="sqft">Approx. Total Square Footage</label>
+              <select id="sqft" name="square_footage">
+                <option value="">Select one</option>
+                <option>Under 10,000 sq ft</option>
+                <option>10,000&ndash;50,000 sq ft</option>
+                <option>50,000&ndash;200,000 sq ft</option>
+                <option>200,000+ sq ft</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="current">Current Service Status</label>
+              <select id="current" name="current_status">
+                <option value="">Select one</option>
+                <option>Currently have a contractor</option>
+                <option>Currently use in-house staff</option>
+                <option>No current cleaning service</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <span class="form-section-title">Project Details</span>
           <div class="field">
-            <label for="phone">Phone</label>
-            <input id="phone" name="phone" type="tel" placeholder="(415) 000-0000">
+            <label>Services Needed</label>
+            <div class="check-grid">
+              <label class="check-chip"><input type="checkbox" name="services" value="Daily Janitorial"> Daily Janitorial</label>
+              <label class="check-chip"><input type="checkbox" name="services" value="Day Porter"> Day Porter</label>
+              <label class="check-chip"><input type="checkbox" name="services" value="Floor Care"> Floor Care</label>
+              <label class="check-chip"><input type="checkbox" name="services" value="Carpet Cleaning"> Carpet Cleaning</label>
+              <label class="check-chip"><input type="checkbox" name="services" value="Window Cleaning"> Window Cleaning</label>
+              <label class="check-chip"><input type="checkbox" name="services" value="Disinfection Services"> Disinfection</label>
+              <label class="check-chip"><input type="checkbox" name="services" value="Construction Cleanup"> Construction Cleanup</label>
+              <label class="check-chip"><input type="checkbox" name="services" value="Other"> Other / Not sure yet</label>
+            </div>
+          </div>
+          <div class="form-row" style="margin-top:16px;">
+            <div class="field">
+              <label for="reason">Reason for Inquiry</label>
+              <select id="reason" name="reason">
+                <option value="">Select one</option>
+                <option>New RFP / bid</option>
+                <option>Contract renewal</option>
+                <option>Not satisfied with current vendor</option>
+                <option>New facility opening</option>
+                <option>Just researching options</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="timeline">Timeline</label>
+              <select id="timeline" name="timeline">
+                <option value="">Select one</option>
+                <option>ASAP</option>
+                <option>Within 30 days</option>
+                <option>1&ndash;3 months</option>
+                <option>3&ndash;6 months</option>
+                <option>No specific timeline</option>
+              </select>
+            </div>
+          </div>
+          <div class="field" style="margin-top:16px;">
+            <label for="msg">Anything else we should know?</label>
+            <textarea id="msg" name="message" placeholder="RFP deadline, specific compliance requirements, current pain points&hellip; If you have an RFP document, email it to proposals@zentrafacilitysolutions.com after submitting."></textarea>
           </div>
         </div>
-        <div class="field">
-          <label for="ftype">Facility Type</label>
-          <select id="ftype" name="facility_type">
-            <option>Government</option>
-            <option>Healthcare</option>
-            <option>Education</option>
-            <option>Commercial / Corporate</option>
-            <option>Other</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="msg">What are you looking for?</label>
-          <textarea id="msg" name="message" placeholder="Facility size, current pain points, timeline for RFP or transition&hellip;"></textarea>
-        </div>
+
         <button type="submit" class="btn btn-primary" style="width:100%;">Request a Proposal</button>
         <p class="form-note">We typically respond within one business day. For urgent facility issues at an active site, call us directly.</p>
       </form>
@@ -974,10 +1190,15 @@
   });
 
   var dashTabs = document.querySelectorAll('.dash-tab');
+  var dashPanels = document.querySelectorAll('.dash-panel-content');
   dashTabs.forEach(function(tab){
     tab.addEventListener('click', function(){
       dashTabs.forEach(function(t){ t.classList.remove('active'); });
       tab.classList.add('active');
+      var target = tab.getAttribute('data-tab');
+      dashPanels.forEach(function(p){
+        p.classList.toggle('active', p.getAttribute('data-panel') === target);
+      });
     });
   });
 
@@ -990,6 +1211,17 @@
     document.querySelectorAll('.reveal').forEach(function(el){ obs.observe(el); });
   } else {
     document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('in'); });
+  }
+
+  var personalDomains = ['gmail.com','yahoo.com','hotmail.com','outlook.com','aol.com','icloud.com','live.com','msn.com','protonmail.com','mail.com'];
+  var emailInput = document.getElementById('email');
+  var emailHint = document.getElementById('emailHint');
+  if(emailInput && emailHint){
+    emailInput.addEventListener('blur', function(){
+      var val = emailInput.value.trim().toLowerCase();
+      var domain = val.split('@')[1] || '';
+      emailHint.classList.toggle('show', personalDomains.indexOf(domain) !== -1);
+    });
   }
 </script>
 
