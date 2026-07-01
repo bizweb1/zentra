@@ -409,6 +409,26 @@
   .check-chip:has(input:checked){border-color:var(--blue-500);background:#EEF3FC;}
   .check-chip input{width:15px;height:15px;flex:none;accent-color:var(--blue-600);}
   .form-note{font-size:12.5px;color:var(--ink-soft);margin-top:14px;}
+  .success-panel{
+    background:#fff;border:1px solid var(--line);border-radius:18px;padding:44px 34px;
+    box-shadow:var(--shadow-card);text-align:center;
+  }
+  .success-panel .sp-icon{
+    width:56px;height:56px;border-radius:50%;background:rgba(31,157,107,.12);color:var(--good);
+    display:flex;align-items:center;justify-content:center;margin:0 auto 20px;
+  }
+  .success-panel .sp-icon svg{width:26px;height:26px;}
+  .success-panel h3{font-size:24px;}
+  .success-panel p{margin-top:12px;color:var(--ink-soft);font-size:15px;max-width:380px;margin-left:auto;margin-right:auto;line-height:1.6;}
+  .success-panel .sp-again{
+    margin-top:22px;display:inline-block;font-size:13.5px;font-weight:600;color:var(--blue-600);
+    font-family:'JetBrains Mono',monospace;cursor:pointer;text-decoration:underline;text-underline-offset:3px;
+  }
+  .form-error{
+    display:none;margin-top:14px;padding:12px 14px;border-radius:9px;background:#FDECEC;
+    border:1px solid #F3B9B9;color:#9A2A2A;font-size:13px;
+  }
+  .form-error.show{display:block;}
 
   /* ---------- FOOTER ---------- */
   footer{background:var(--navy-950);color:rgba(255,255,255,.7);padding:64px 0 28px;}
@@ -1006,7 +1026,7 @@
           </div>
         </div>
       </div>
-      <form class="contact-form reveal" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+      <form class="contact-form reveal" id="proposalForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
         <input type="hidden" name="_subject" value="New Proposal Request &mdash; Zentra Facility Solutions">
 
         <div class="form-section">
@@ -1131,9 +1151,19 @@
           </div>
         </div>
 
-        <button type="submit" class="btn btn-primary" style="width:100%;">Request a Proposal</button>
+        <button type="submit" class="btn btn-primary" id="proposalSubmit" style="width:100%;">Request a Proposal</button>
+        <p class="form-error" id="proposalError">Something went wrong sending your request. Please try again, or email us directly at proposals@zentrafacilitysolutions.com.</p>
         <p class="form-note">We typically respond within one business day. For urgent facility issues at an active site, call us directly.</p>
       </form>
+
+      <div class="success-panel" id="proposalSuccess" hidden>
+        <div class="sp-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg>
+        </div>
+        <h3>Thanks &mdash; we've got your request.</h3>
+        <p>A member of our team will review your facility details and follow up within one business day. If it's time-sensitive, feel free to call us directly using the number to the left.</p>
+        <span class="sp-again" id="proposalReset">Submit another request</span>
+      </div>
     </div>
   </div>
 </section>
@@ -1221,6 +1251,50 @@
       var val = emailInput.value.trim().toLowerCase();
       var domain = val.split('@')[1] || '';
       emailHint.classList.toggle('show', personalDomains.indexOf(domain) !== -1);
+    });
+  }
+
+  var proposalForm = document.getElementById('proposalForm');
+  var proposalSuccess = document.getElementById('proposalSuccess');
+  var proposalError = document.getElementById('proposalError');
+  var proposalSubmit = document.getElementById('proposalSubmit');
+  var proposalReset = document.getElementById('proposalReset');
+
+  if(proposalForm){
+    proposalForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      proposalError.classList.remove('show');
+      proposalSubmit.disabled = true;
+      proposalSubmit.textContent = 'Sending\u2026';
+
+      var data = new FormData(proposalForm);
+      fetch(proposalForm.action, {
+        method: 'POST',
+        body: data,
+        headers: { 'Accept': 'application/json' }
+      }).then(function(response){
+        if(response.ok){
+          proposalForm.hidden = true;
+          proposalSuccess.hidden = false;
+          proposalSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          throw new Error('Submission failed');
+        }
+      }).catch(function(){
+        proposalError.classList.add('show');
+      }).finally(function(){
+        proposalSubmit.disabled = false;
+        proposalSubmit.textContent = 'Request a Proposal';
+      });
+    });
+  }
+
+  if(proposalReset){
+    proposalReset.addEventListener('click', function(){
+      proposalForm.reset();
+      proposalForm.hidden = false;
+      proposalSuccess.hidden = true;
+      proposalForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
   }
 </script>
